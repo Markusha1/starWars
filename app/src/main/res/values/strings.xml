@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Star Wars</string>
+    <string name="height">Height</string>
+    <string name="mass">Mass</string>
+    <string name="gender">Gender</string>
+    <string name="birth_year">Birth Year</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="example_mass">80</string>
+    <string name="example_year">1999</string>
+    <string name="example_height">196</string>
+    <string name="delete_from_fav">Delete</string>
+    <string name="add_to_fav">Add to favourites</string>
+    <string name="all">All</string>
+    <string name="favourites">Favourites</string>
+    <string name="search">Search</string>
+</resources>
