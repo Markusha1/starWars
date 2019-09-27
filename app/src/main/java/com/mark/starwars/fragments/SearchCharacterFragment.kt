@@ -4,9 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
-import androidx.core.os.bundleOf
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.MvpAppCompatFragment
@@ -15,6 +12,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.mark.starwars.R
 import com.mark.starwars.di.AppModule
 import com.mark.starwars.di.DaggerAppComponent
+import com.mark.starwars.di.NetModule
 import com.mark.starwars.di.RoomModule
 import com.mark.starwars.model.Character
 import com.mark.starwars.net.RetrofitService
@@ -22,21 +20,18 @@ import com.mark.starwars.presenters.FavouriteFragmentPresenter
 import com.mark.starwars.utils.FavouriteAdapter
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.FavouriteView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
-    private val apiService = RetrofitService.create()
+    @Inject
+    lateinit var apiService : RetrofitService
     @Inject
     lateinit var repository: Repository
     @InjectPresenter
     lateinit var presenter : FavouriteFragmentPresenter
     @ProvidePresenter
     fun providePresenter():FavouriteFragmentPresenter {
-        return FavouriteFragmentPresenter(repository = repository)
+        return FavouriteFragmentPresenter(repository = repository, apiService = apiService)
     }
     lateinit var mAdapter : FavouriteAdapter
 
@@ -56,8 +51,7 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(
-            RoomModule()
-        ).build()
+            RoomModule()).netModule(NetModule()).build()
         component.inject(this)
     }
 
@@ -68,7 +62,6 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
         myRecycler.layoutManager = layoutManager
         mAdapter = FavouriteAdapter(presenter)
         myRecycler.adapter = mAdapter
-        presenter.loadItems()
         return view
     }
 
@@ -86,13 +79,7 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 var inputText = newText!!.toLowerCase().trim()
-                GlobalScope.launch(Dispatchers.IO) {
-                    val response = apiService.getSeatchResult(inputText).await()
-                    val results = response.body()?.results
-                    withContext(Dispatchers.Main){
-                        mAdapter.upLoadSearchResult(results!!)
-                    }
-                }
+                presenter.loadItems(inputText)
                 return true
             }
         })
@@ -100,11 +87,13 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
     }
 
     override fun loadList(list: List<Character>) {
+        mAdapter.upLoadSearchResult(list)
     }
 
     override fun showDetails(c: Character) {
-        activity!!.supportFragmentManager.beginTransaction()
+        fragmentManager!!.beginTransaction()
+            .addToBackStack(null)
             .replace(R.id.fragment_container, DetailFragment.newInstance(c))
-            .addToBackStack(null).commit()
+            .commit()
     }
 }

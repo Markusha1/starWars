@@ -8,9 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -65,9 +62,7 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
             presenter.removeFromFavourite(character)
             }
         }
-        backButton.setOnClickListener {activity!!.supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, FavouriteListFragment.newInstance())
-            .addToBackStack(null).commit()}
+        backButton.setOnClickListener {fragmentManager!!.popBackStackImmediate()}
         return v
     }
 

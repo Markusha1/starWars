@@ -5,9 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.MvpAppCompatFragment
@@ -16,8 +13,10 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.mark.starwars.R
 import com.mark.starwars.di.AppModule
 import com.mark.starwars.di.DaggerAppComponent
+import com.mark.starwars.di.NetModule
 import com.mark.starwars.di.RoomModule
 import com.mark.starwars.model.Character
+import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.presenters.FavouriteFragmentPresenter
 import com.mark.starwars.utils.FavouriteAdapter
 import com.mark.starwars.utils.Repository
@@ -26,13 +25,15 @@ import javax.inject.Inject
 
 class FavouriteListFragment : MvpAppCompatFragment(), FavouriteView {
     @Inject
+    lateinit var apiService : RetrofitService
+    @Inject
     lateinit var characterRepository: Repository
     lateinit var mAdapter : FavouriteAdapter
     @InjectPresenter
     lateinit var presenter: FavouriteFragmentPresenter
     @ProvidePresenter
     fun providePresenter():FavouriteFragmentPresenter{
-        return FavouriteFragmentPresenter(repository = characterRepository)
+        return FavouriteFragmentPresenter(repository = characterRepository, apiService = apiService)
     }
 
     companion object {
@@ -43,7 +44,8 @@ class FavouriteListFragment : MvpAppCompatFragment(), FavouriteView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(RoomModule()).build()
+        val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(RoomModule()).netModule(
+            NetModule()).build()
         component.inject(this)
     }
 
@@ -64,9 +66,10 @@ class FavouriteListFragment : MvpAppCompatFragment(), FavouriteView {
 
 
     override fun showDetails(c: Character) {
-            activity!!.supportFragmentManager.beginTransaction()
+           fragmentManager!!.beginTransaction()
+                .addToBackStack(null)
                 .replace(R.id.fragment_container, DetailFragment.newInstance(c))
-                .addToBackStack(null).commit()
+                .commit()
     }
 
     override fun onResume() {

@@ -9,7 +9,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, RoomModule::class])
+@Component(modules = [AppModule::class, RoomModule::class, NetModule::class])
 interface AppComponent {
     fun inject(detailFragment: DetailFragment)
     fun inject(allFragment: AllCharactersListFragment)

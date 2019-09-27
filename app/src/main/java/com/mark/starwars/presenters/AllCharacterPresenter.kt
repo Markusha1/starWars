@@ -4,23 +4,21 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.mark.starwars.model.Character
+import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.AllCharactersFragmentView
 import kotlinx.coroutines.*
 
 @InjectViewState
-class AllCharacterPresenter(var repository: Repository): MvpPresenter<AllCharactersFragmentView>(){
+class AllCharacterPresenter(val repository: Repository, val apiService : RetrofitService): MvpPresenter<AllCharactersFragmentView>(){
     private val FIRST_PAGE = 1
     private var CURRENT_PAGE = FIRST_PAGE
     private val MAX_PAGE = 9
 
-    fun init(){
-        viewState.loadFirstList(CURRENT_PAGE)
-    }
     fun paginate(){
         if(CURRENT_PAGE != MAX_PAGE) {
             CURRENT_PAGE++
-            viewState.getMoreItems(CURRENT_PAGE)
+            loadMoreCharacters()
             Log.d("page", "$CURRENT_PAGE")
         }
     }
@@ -55,6 +53,32 @@ class AllCharacterPresenter(var repository: Repository): MvpPresenter<AllCharact
         }
         Log.d("COUNT", "$count")
         return count
+    }
+
+    fun loadFirstCharacters(){
+        viewState.showProgress()
+        GlobalScope.launch(Dispatchers.IO) {
+            val requestCharacters = apiService.getCharacters(CURRENT_PAGE).await()
+            val characters = requestCharacters.body()
+            Log.d("potok", "newList")
+            withContext(Dispatchers.Main) {
+                viewState.hideProgress()
+                viewState.onGetDataSuccess(characters!!.results)
+            }
+        }
+    }
+
+    private fun loadMoreCharacters(){
+        viewState.showProgress()
+        GlobalScope.launch(Dispatchers.IO) {
+            val requestCharacters = apiService.getCharacters(CURRENT_PAGE)
+            val characters = requestCharacters.await().body()
+            withContext(Dispatchers.Main) {
+                viewState.hideProgress()
+                viewState.onGetDataSuccess(characters!!.results)
+                Log.d("list", "loadMore")
+            }
+        }
     }
 
 }

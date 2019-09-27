@@ -6,7 +6,8 @@ import com.mark.starwars.views.MainActivityView
 
 @InjectViewState
 class MainActivityPresenter : MvpPresenter<MainActivityView>() {
-    fun init(){
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
         viewState.setFirstFragment()
     }
 }

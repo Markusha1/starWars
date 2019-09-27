@@ -8,9 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.MvpAppCompatFragment
@@ -21,29 +18,26 @@ import com.mark.starwars.utils.PaginationScrollListener
 import com.mark.starwars.R
 import com.mark.starwars.di.AppModule
 import com.mark.starwars.di.DaggerAppComponent
+import com.mark.starwars.di.NetModule
 import com.mark.starwars.di.RoomModule
 import com.mark.starwars.model.Character
 import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.presenters.AllCharacterPresenter
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.AllCharactersFragmentView
-import kotlinx.android.synthetic.main.all_characters.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentView {
+    @Inject
+    lateinit var apiService : RetrofitService
     @Inject
     lateinit var repository: Repository
     @InjectPresenter
     lateinit var presenter: AllCharacterPresenter
     @ProvidePresenter
     fun provideAllPresenter(): AllCharacterPresenter{
-        return AllCharacterPresenter(repository)
+        return AllCharacterPresenter(repository, apiService)
     }
-    private val apiService = RetrofitService.create()
     var isLastPage = false
     var isLoading = false
     private lateinit var  mAdapter : CharacterAdapter
@@ -58,7 +52,7 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(
+        val component = DaggerAppComponent.builder().netModule(NetModule()).appModule(AppModule(context)).roomModule(
             RoomModule()).build()
         component.inject(this)
     }
@@ -70,7 +64,7 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
         val layoutManager = LinearLayoutManager(activity)
         myRecyclerView.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
-        presenter.init()
+        presenter.loadFirstCharacters()
         myRecyclerView.addOnScrollListener(object :
             PaginationScrollListener(layoutManager) {
             override fun isLastPage(): Boolean {
@@ -91,41 +85,24 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
         return view
     }
 
-
-    override fun loadFirstList(page : Int) {
-        progress.visibility = View.VISIBLE
-        GlobalScope.launch(Dispatchers.IO) {
-            val requestCharacters = apiService.getCharacters(page).await()
-            val characters = requestCharacters.body()
-            Log.d("potok", "newList")
-            withContext(Dispatchers.Main) {
-                progress.visibility = View.INVISIBLE
-                mAdapter.addItems(characters!!.results)
-                mAdapter.notifyDataSetChanged()
-            }
-            isLoading = false
-        }
+    override fun onGetDataSuccess(list: List<Character>) {
+        mAdapter.addItems(list)
     }
 
-        override fun getMoreItems(page : Int) {
-            progress.visibility = View.VISIBLE
-            GlobalScope.launch(Dispatchers.IO) {
-                val requestCharacters = apiService.getCharacters(page)
-                val characters = requestCharacters.await().body()
-                withContext(Dispatchers.Main) {
-                    progress.visibility = View.INVISIBLE
-                    mAdapter.addItems(characters!!.results)
-                    Log.d("list", "loadMore")
-                }
-                isLoading = false
-            }
-        }
-
     override fun showDetails(character : Character){
-        activity!!.supportFragmentManager.beginTransaction()
+        fragmentManager!!.beginTransaction()
             .replace(R.id.fragment_container, DetailFragment.newInstance(character))
             .addToBackStack(null).commit()
         }
+
+    override fun hideProgress() {
+        progress.visibility = View.INVISIBLE
+        isLoading = false
+    }
+
+    override fun showProgress() {
+        progress.visibility = View.VISIBLE
+    }
 
 
     override fun onDestroy() {
