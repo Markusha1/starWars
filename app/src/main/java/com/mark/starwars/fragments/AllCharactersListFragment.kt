@@ -1,6 +1,7 @@
 package com.mark.starwars.fragments
 
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -41,7 +42,7 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
     var isLastPage = false
     var isLoading = false
     private lateinit var  mAdapter : CharacterAdapter
-    lateinit var progress : ProgressBar
+    private lateinit var progress : ProgressBar
 
 
     companion object {
@@ -57,10 +58,11 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
         component.inject(this)
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.all_characters, container, false)
-        val myRecyclerView = view.findViewById(R.id.character_list) as RecyclerView
-        progress = view.findViewById(R.id.progressBar) as ProgressBar
+        val itemview = inflater.inflate(R.layout.all_characters, container, false)
+        val myRecyclerView = itemview.findViewById(R.id.character_list) as RecyclerView
+        progress = itemview.findViewById(R.id.progressBar) as ProgressBar
         val layoutManager = LinearLayoutManager(activity)
         myRecyclerView.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
@@ -82,7 +84,7 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
             }
         })
         myRecyclerView.adapter = mAdapter
-        return view
+        return itemview
     }
 
     override fun onGetDataSuccess(list: List<Character>) {
@@ -90,9 +92,11 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
     }
 
     override fun showDetails(character : Character){
-        fragmentManager!!.beginTransaction()
-            .replace(R.id.fragment_container, DetailFragment.newInstance(character))
-            .addToBackStack(null).commit()
+        activity!!.supportFragmentManager.beginTransaction()
+            .hide(this)
+            .add(R.id.fragment_container, DetailFragment.newInstance(character))
+            .addToBackStack(null)
+            .commit()
         }
 
     override fun hideProgress() {
@@ -102,6 +106,16 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
 
     override fun showProgress() {
         progress.visibility = View.VISIBLE
+    }
+
+    override fun showErrorDialog() {
+        val alertDialog = AlertDialog.Builder(activity)
+            .setTitle(R.string.connection_error)
+            .setNegativeButton(R.string.ok){dialogInterface, i ->
+                dialogInterface.cancel()
+            }
+        val dialog = alertDialog.create()
+        dialog.show()
     }
 
 

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.main_activity.*
 class MainActivity : MvpAppCompatActivity(), MainActivityView {
     @InjectPresenter
     lateinit var  presenter: MainActivityPresenter
-    lateinit var fm : FragmentManager
+    private lateinit var fm : FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
             when(item.itemId){
                 R.id.nav_list -> {
                     fm.beginTransaction()
-                        .replace(R.id.fragment_container, AllCharactersListFragment.newInstance())
+                        .replace(R.id.fragment_container, AllCharactersListFragment.newInstance(), "fragment")
                         .addToBackStack(null).commit()
                     true
                 }
@@ -49,7 +49,6 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
     override fun setFirstFragment() {
         fm.beginTransaction()
             .replace(R.id.fragment_container, AllCharactersListFragment.newInstance())
-            .addToBackStack(null)
             .commit()
     }
 }

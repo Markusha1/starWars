@@ -33,7 +33,7 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
     fun providePresenter():FavouriteFragmentPresenter {
         return FavouriteFragmentPresenter(repository = repository, apiService = apiService)
     }
-    lateinit var mAdapter : FavouriteAdapter
+    private lateinit var mAdapter : FavouriteAdapter
 
 
     companion object {
@@ -56,13 +56,13 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view= inflater.inflate(R.layout.search_fragmnet, container, false)
-        val myRecycler = view.findViewById(R.id.recycler_view) as RecyclerView
+        val itemview= inflater.inflate(R.layout.search_fragmnet, container, false)
+        val myRecycler = itemview.findViewById(R.id.recycler_view) as RecyclerView
         val layoutManager = LinearLayoutManager(activity)
         myRecycler.layoutManager = layoutManager
         mAdapter = FavouriteAdapter(presenter)
         myRecycler.adapter = mAdapter
-        return view
+        return itemview
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -91,9 +91,10 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
     }
 
     override fun showDetails(c: Character) {
-        fragmentManager!!.beginTransaction()
+        activity!!.supportFragmentManager.beginTransaction()
             .addToBackStack(null)
-            .replace(R.id.fragment_container, DetailFragment.newInstance(c))
+            .hide(this)
+            .add(R.id.fragment_container, DetailFragment.newInstance(c))
             .commit()
     }
 }

@@ -8,5 +8,9 @@
         <item name="colorAccent">@color/orange</item>
     </style>
 
+    <style name="MyProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/pink</item>
+    </style>
+
 
 </resources>

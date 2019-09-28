@@ -14,4 +14,7 @@
     <string name="all">All</string>
     <string name="favourites">Favourites</string>
     <string name="search">Search</string>
+    <string name="connection_error">Server is not available</string>
+    <string name="ok">OK</string>
+    <string name="already_added">Already in your Favourites</string>
 </resources>

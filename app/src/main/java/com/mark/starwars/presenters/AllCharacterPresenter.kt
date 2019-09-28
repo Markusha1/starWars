@@ -8,6 +8,7 @@ import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.AllCharactersFragmentView
 import kotlinx.coroutines.*
+import java.net.SocketTimeoutException
 
 @InjectViewState
 class AllCharacterPresenter(val repository: Repository, val apiService : RetrofitService): MvpPresenter<AllCharactersFragmentView>(){
@@ -42,31 +43,33 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
     }
 
     fun findDuplicates(c: Character) : Int{
-        var count = 0
-        GlobalScope.launch (Dispatchers.IO){
+        return runBlocking(Dispatchers.IO){
+            var item = 0
             val list = repository.getAllItems()
-            withContext(Dispatchers.Main) {
-                list.forEach {
-                    if (it.name == c.name) count += 1
-                }
+            Log.d("COUNT", "$list")
+            list.forEach {
+                if (c.name == it.name) item += 1}
+                Log.d("COUNT", "$item")
+            return@runBlocking item
             }
-        }
-        Log.d("COUNT", "$count")
-        return count
     }
 
     fun loadFirstCharacters(){
         viewState.showProgress()
-        GlobalScope.launch(Dispatchers.IO) {
-            val requestCharacters = apiService.getCharacters(CURRENT_PAGE).await()
-            val characters = requestCharacters.body()
-            Log.d("potok", "newList")
-            withContext(Dispatchers.Main) {
-                viewState.hideProgress()
-                viewState.onGetDataSuccess(characters!!.results)
+        try {
+            GlobalScope.launch(Dispatchers.IO) {
+                val requestCharacters = apiService.getCharacters(CURRENT_PAGE).await()
+                val characters = requestCharacters.body()
+                Log.d("potok", "newList")
+                withContext(Dispatchers.Main) {
+                    viewState.hideProgress()
+                    viewState.onGetDataSuccess(characters!!.results)
+                }
+            }
+        } catch (e : SocketTimeoutException){
+            viewState.showErrorDialog()
             }
         }
-    }
 
     private fun loadMoreCharacters(){
         viewState.showProgress()
@@ -80,5 +83,4 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
             }
         }
     }
-
 }

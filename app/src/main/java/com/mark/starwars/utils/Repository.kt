@@ -11,10 +11,10 @@ class Repository @Inject
 constructor(private val budgetDao: CharacterDataDao) {
 
      suspend fun getAllItems(): List<Character> {
-        return GlobalScope.async(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             budgetDao.getAllCharacters()
-        }.await()
-    }
+        }
+     }
 
     fun addItem(character : Character) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -24,11 +24,5 @@ constructor(private val budgetDao: CharacterDataDao) {
     fun deleteItem(character: Character) {
        GlobalScope.launch(Dispatchers.IO) {
            budgetDao.deleteCharacter(character) }
-    }
-
-    suspend fun findCommons(name: String): Int{
-        return GlobalScope.async(Dispatchers.IO) {
-            budgetDao.findCommons(name)
-        }.await()
     }
 }

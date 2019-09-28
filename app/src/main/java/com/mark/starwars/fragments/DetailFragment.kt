@@ -35,21 +35,23 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance(character: Character) = DetailFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(TAG_CHARACTER, character)
-            }
+        fun newInstance(character: Character) : DetailFragment {
+            val fragment = DetailFragment()
+            val args = Bundle()
+            args.putSerializable("DETAILS", character)
+            fragment.arguments = args
+            return fragment
         }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         arguments?.getSerializable(TAG_CHARACTER)?.let { character = it as Character }
-        val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(RoomModule()).build()
+        val component = DaggerAppComponent.builder().appModule(AppModule(activity!!.applicationContext)).roomModule(RoomModule()).build()
         component.inject(this)
         Log.d("test", "$character")
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.detail_character, container, false)
@@ -62,7 +64,8 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
             presenter.removeFromFavourite(character)
             }
         }
-        backButton.setOnClickListener {fragmentManager!!.popBackStackImmediate()}
+        backButton.setOnClickListener {activity!!.supportFragmentManager.popBackStackImmediate() }
+        Log.d("loop", "Created again")
         return v
     }
 
@@ -89,6 +92,7 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
 
     override fun removeFavourite() {
         star_button.setImageResource(R.drawable.ic_hollow_favourite)
+        character.isFavourite = false
         Toast.makeText(context, "Remove to favorite", Toast.LENGTH_SHORT).show()
     }
 

@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -34,9 +33,11 @@ class CharacterAdapter(val presenter : AllCharacterPresenter): RecyclerView.Adap
             Log.d("char", "$c")
         }
         holder.itemView.setOnLongClickListener {
-            var character = items[position]
-            if(presenter.findDuplicates(character)>0){
-                showDeleteMenu(holder.itemView, character)
+            val character = items[position]
+            val counter = presenter.findDuplicates(character)
+            Log.d("COUNTER", "$counter")
+            if(counter > 0){
+                showAlreadyMenu(holder.itemView)
             }else showAddMenu(holder.itemView, character)
             true
         }
@@ -52,12 +53,12 @@ class CharacterAdapter(val presenter : AllCharacterPresenter): RecyclerView.Adap
         popupMenu.show()
     }
 
-    private fun showDeleteMenu(v : View, character: Character){
+    private fun showAlreadyMenu(v : View){
         val popupMenu = PopupMenu(v.context,v)
-        popupMenu.menuInflater.inflate(R.menu.delete_from_favourite_menu,popupMenu.menu)
+        popupMenu.menuInflater.inflate(R.menu.already_added,popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
-            if (item.itemId == R.id.delete) {
-                presenter.delete(character)
+            if (item.itemId == R.id.already) {
+                return@setOnMenuItemClickListener true
             }
             true
         }
@@ -67,7 +68,6 @@ class CharacterAdapter(val presenter : AllCharacterPresenter): RecyclerView.Adap
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val name = itemView.findViewById<TextView>(R.id.hero_name)
-        private val image = itemView.findViewById<ImageView>(R.id.profile_image)
 
         fun bind(item: Character){
             name.text = item.name

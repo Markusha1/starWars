@@ -2,9 +2,8 @@ package com.mark.starwars.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.MvpAppCompatFragment
@@ -27,13 +26,18 @@ class FavouriteListFragment : MvpAppCompatFragment(), FavouriteView {
     @Inject
     lateinit var apiService : RetrofitService
     @Inject
-    lateinit var characterRepository: Repository
-    lateinit var mAdapter : FavouriteAdapter
+    lateinit var repository: Repository
+    private lateinit var mAdapter : FavouriteAdapter
     @InjectPresenter
     lateinit var presenter: FavouriteFragmentPresenter
     @ProvidePresenter
     fun providePresenter():FavouriteFragmentPresenter{
-        return FavouriteFragmentPresenter(repository = characterRepository, apiService = apiService)
+        return FavouriteFragmentPresenter(repository = repository, apiService = apiService)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mAdapter.notifyDataSetChanged()
     }
 
     companion object {
@@ -51,30 +55,32 @@ class FavouriteListFragment : MvpAppCompatFragment(), FavouriteView {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.favourite_list, container, false)
-        val recyclerView = view.findViewById(R.id.recyclerview) as RecyclerView
+        val itemview = inflater.inflate(R.layout.favourite_list, container, false)
+        val recyclerView = itemview.findViewById(R.id.recyclerview) as RecyclerView
         val layoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = layoutManager
         mAdapter = FavouriteAdapter(presenter)
         recyclerView.adapter = mAdapter
-        return view
+        return itemview
     }
 
     override fun loadList(list: List<Character>) {
-        mAdapter.addItems(list)
+        mAdapter.upLoadSearchResult(list)
     }
 
 
     override fun showDetails(c: Character) {
-           fragmentManager!!.beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.fragment_container, DetailFragment.newInstance(c))
-                .commit()
+           activity!!.supportFragmentManager.beginTransaction()
+               .addToBackStack(null)
+               .replace(R.id.fragment_container, DetailFragment.newInstance(c))
+               .commit()
     }
 
     override fun onResume() {
         super.onResume()
+        Log.d("Zanovo", "zan")
         presenter.loadItems()
-        mAdapter.notifyDataSetChanged()
+//        mAdapter.notifyDataSetChanged()
     }
+
 }

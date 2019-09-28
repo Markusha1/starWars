@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -57,19 +56,11 @@ class FavouriteAdapter(val presenter : FavouriteFragmentPresenter) : RecyclerVie
 
     class FavoriteHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         private val name = itemView.findViewById<TextView>(R.id.hero_name)
-        private val image = itemView.findViewById<ImageView>(R.id.profile_image)
 
         fun bind(item: Character) {
             name.text = item.name
         }
 
-    }
-
-    fun addItems(newItems : List<Character>){
-        newItems.forEach{
-            items.add(it)
-            notifyItemInserted(items.size)
-        }
     }
 
     fun upLoadSearchResult(list : List<Character>){

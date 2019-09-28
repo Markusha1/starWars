@@ -14,8 +14,4 @@ interface CharacterDataDao {
 
     @Delete
     fun deleteCharacter(character: Character)
-
-    @Query("SELECT COUNT(*) FROM character WHERE name=:title")
-    fun findCommons(title : String) : Int
-
 }
