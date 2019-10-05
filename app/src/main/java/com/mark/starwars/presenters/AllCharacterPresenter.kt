@@ -8,7 +8,7 @@ import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.AllCharactersFragmentView
 import kotlinx.coroutines.*
-import java.net.SocketTimeoutException
+import retrofit2.HttpException
 
 @InjectViewState
 class AllCharacterPresenter(val repository: Repository, val apiService : RetrofitService): MvpPresenter<AllCharactersFragmentView>(){
@@ -36,12 +36,6 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
         }
     }
 
-    fun delete(character: Character){
-        GlobalScope.launch(Dispatchers.IO){
-            repository.deleteItem(character)
-        }
-    }
-
     fun findDuplicates(c: Character) : Int{
         return runBlocking(Dispatchers.IO){
             var item = 0
@@ -56,18 +50,19 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
 
     fun loadFirstCharacters(){
         viewState.showProgress()
-        try {
             GlobalScope.launch(Dispatchers.IO) {
                 val requestCharacters = apiService.getCharacters(CURRENT_PAGE).await()
                 val characters = requestCharacters.body()
                 Log.d("potok", "newList")
                 withContext(Dispatchers.Main) {
-                    viewState.hideProgress()
-                    viewState.onGetDataSuccess(characters!!.results)
+                    try {
+                        if (requestCharacters.isSuccessful) {
+                            viewState.hideProgress()
+                            viewState.onGetDataSuccess(characters!!.results)
+                        }
+                        else viewState.showErrorDialog()
+                    } catch (e : HttpException){viewState.showErrorDialog()}
                 }
-            }
-        } catch (e : SocketTimeoutException){
-            viewState.showErrorDialog()
             }
         }
 

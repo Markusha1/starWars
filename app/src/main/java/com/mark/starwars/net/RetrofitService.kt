@@ -14,14 +14,4 @@ interface RetrofitService {
     @GET("api/people/")
     fun getSeatchResult(@Query("search") text : String) : Deferred<Response<CharacterList>>
 
-//    companion object Factory {
-//        fun create(): RetrofitService {
-//            val retrofit = Retrofit.Builder()
-//                .baseUrl("https://swapi.co/")
-//                .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build()
-//            return retrofit.create(RetrofitService::class.java)
-//        }
-//    }
 }

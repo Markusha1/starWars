@@ -78,7 +78,7 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                var inputText = newText!!.toLowerCase().trim()
+                val inputText = newText!!.toLowerCase().trim()
                 presenter.loadItems(inputText)
                 return true
             }
