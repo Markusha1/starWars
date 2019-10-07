@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.mark.starwars.model.Character
 
-@Database(entities = [Character::class], version = 5, exportSchema = false)
+@Database(entities = [Character::class], version = 3, exportSchema = false)
 abstract class AppDataBase : RoomDatabase(){
     abstract fun getDataDao() : CharacterDataDao
 }

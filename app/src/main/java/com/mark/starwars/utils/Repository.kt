@@ -23,6 +23,6 @@ constructor(private val budgetDao: CharacterDataDao) {
 
     fun deleteItem(character: Character) {
        GlobalScope.launch(Dispatchers.IO) {
-           budgetDao.deleteCharacter(character) }
+           budgetDao.deleteCharacter(character.name) }
     }
 }

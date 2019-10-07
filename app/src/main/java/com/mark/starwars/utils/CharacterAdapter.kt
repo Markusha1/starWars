@@ -66,7 +66,7 @@ class CharacterAdapter(val presenter : AllCharacterPresenter): RecyclerView.Adap
     }
 
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val name = itemView.findViewById<TextView>(R.id.hero_name)
 
         fun bind(item: Character){

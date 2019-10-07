@@ -8,7 +8,7 @@ import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.AllCharactersFragmentView
 import kotlinx.coroutines.*
-import retrofit2.HttpException
+import java.io.IOException
 
 @InjectViewState
 class AllCharacterPresenter(val repository: Repository, val apiService : RetrofitService): MvpPresenter<AllCharactersFragmentView>(){
@@ -38,13 +38,9 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
 
     fun findDuplicates(c: Character) : Int{
         return runBlocking(Dispatchers.IO){
-            var item = 0
             val list = repository.getAllItems()
             Log.d("COUNT", "$list")
-            list.forEach {
-                if (c.name == it.name) item += 1}
-                Log.d("COUNT", "$item")
-            return@runBlocking item
+            return@runBlocking list.count {it.name == c.name}
             }
     }
 
@@ -61,7 +57,7 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
                             viewState.onGetDataSuccess(characters!!.results)
                         }
                         else viewState.showErrorDialog()
-                    } catch (e : HttpException){viewState.showErrorDialog()}
+                    } catch (e : IOException){viewState.showErrorDialog()}
                 }
             }
         }

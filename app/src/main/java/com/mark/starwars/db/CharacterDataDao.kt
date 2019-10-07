@@ -12,6 +12,6 @@ interface CharacterDataDao {
     @Insert
     fun insertCharacter(character: Character)
 
-    @Delete
-    fun deleteCharacter(character: Character)
+    @Query("DELETE FROM character WHERE name = :character")
+    fun deleteCharacter(character: String)
 }

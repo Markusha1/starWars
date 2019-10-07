@@ -2,7 +2,6 @@ package com.mark.starwars.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,6 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
         arguments?.getSerializable(TAG_CHARACTER)?.let { character = it as Character }
         val component = DaggerAppComponent.builder().appModule(AppModule(activity!!.applicationContext)).roomModule(RoomModule()).build()
         component.inject(this)
-        Log.d("test", "$character")
     }
 
 
@@ -65,7 +63,6 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
             }
         }
         backButton.setOnClickListener {activity!!.supportFragmentManager.popBackStackImmediate() }
-        Log.d("loop", "Created again")
         return v
     }
 
