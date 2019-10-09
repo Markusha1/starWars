@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toast
 import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,6 +68,7 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
         myRecycler.adapter = mAdapter
         val tb = itemview.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
         (activity as AppCompatActivity).setSupportActionBar(tb)
+        (activity as AppCompatActivity).supportActionBar?.title = ""
         setHasOptionsMenu(true)
         return itemview
     }
@@ -84,7 +86,7 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val inputText = newText!!.toLowerCase().trim()
+                var inputText = newText!!.toLowerCase().trim()
                 presenter.loadItems(inputText)
                 return true
             }

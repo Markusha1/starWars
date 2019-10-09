@@ -1,5 +1,6 @@
 package com.mark.starwars.presenters
 
+import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.mark.starwars.model.Character
@@ -27,9 +28,10 @@ class FavouriteFragmentPresenter(private val repository: Repository, val apiServ
     fun loadItems(title : String){
         GlobalScope.launch(Dispatchers.IO) {
             val response = apiService.getSeatchResult(title).await()
-            val result = response.body()?.results
+            val result = response.body()!!.results
             withContext(Dispatchers.Main){
-                viewState.loadList(result!!)
+                Log.d("SEARCH", "$result")
+                viewState.loadList(result)
             }
         }
     }
