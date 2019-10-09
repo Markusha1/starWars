@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.MvpAppCompatFragment
@@ -20,6 +22,7 @@ import com.mark.starwars.presenters.FavouriteFragmentPresenter
 import com.mark.starwars.utils.FavouriteAdapter
 import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.FavouriteView
+import kotlinx.android.synthetic.main.search_fragmnet.*
 import javax.inject.Inject
 
 class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
@@ -62,6 +65,9 @@ class SearchCharacterFragment : MvpAppCompatFragment(), FavouriteView {
         myRecycler.layoutManager = layoutManager
         mAdapter = FavouriteAdapter(presenter)
         myRecycler.adapter = mAdapter
+        val tb = itemview.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
+        (activity as AppCompatActivity).setSupportActionBar(tb)
+        setHasOptionsMenu(true)
         return itemview
     }
 
