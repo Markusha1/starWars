@@ -4,11 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.mark.starwars.R
 import com.mark.starwars.di.AppModule
 import com.mark.starwars.di.DaggerAppComponent
@@ -19,21 +17,16 @@ import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.presenters.FavouriteFragmentPresenter
 import com.mark.starwars.utils.FavouriteAdapter
 import com.mark.starwars.utils.Repository
-import com.mark.starwars.views.FavouriteView
+import com.mark.starwars.views.IFavouriteListView
 import javax.inject.Inject
 
-class FavouriteListFragment : MvpAppCompatFragment(), FavouriteView {
+class FavouriteListFragment : Fragment(), IFavouriteListView {
     @Inject
     lateinit var apiService : RetrofitService
     @Inject
     lateinit var repository: Repository
     private lateinit var mAdapter : FavouriteAdapter
-    @InjectPresenter
     lateinit var presenter: FavouriteFragmentPresenter
-    @ProvidePresenter
-    fun providePresenter():FavouriteFragmentPresenter{
-        return FavouriteFragmentPresenter(repository = repository, apiService = apiService)
-    }
 
     override fun onStart() {
         super.onStart()

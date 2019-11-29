@@ -1,8 +1,6 @@
 package com.mark.starwars.views
 
-import com.arellomobile.mvp.MvpView
-
-interface DetailFragmentView : MvpView {
+interface IDetailView {
     fun initDetails()
     fun addFavourite()
     fun removeFavourite()

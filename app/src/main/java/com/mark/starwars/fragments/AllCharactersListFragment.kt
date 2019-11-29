@@ -9,38 +9,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.mark.starwars.utils.CharacterAdapter
 import com.mark.starwars.utils.PaginationScrollListener
 import com.mark.starwars.R
-import com.mark.starwars.di.AppModule
-import com.mark.starwars.di.DaggerAppComponent
-import com.mark.starwars.di.NetModule
-import com.mark.starwars.di.RoomModule
 import com.mark.starwars.model.Character
-import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.presenters.AllCharacterPresenter
-import com.mark.starwars.utils.Repository
-import com.mark.starwars.views.AllCharactersFragmentView
-import javax.inject.Inject
+import com.mark.starwars.utils.Injector
+import com.mark.starwars.views.IAllCharacterView
 
-class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentView {
-    @Inject
-    lateinit var apiService : RetrofitService
-    @Inject
-    lateinit var repository: Repository
-    @InjectPresenter
-    lateinit var presenter: AllCharacterPresenter
-    @ProvidePresenter
-    fun provideAllPresenter(): AllCharacterPresenter{
-        return AllCharacterPresenter(repository, apiService)
-    }
-    var isLastPage = false
-    var isLoading = false
+class AllCharactersListFragment : Fragment(), IAllCharacterView {
+    private val presenter: AllCharacterPresenter = AllCharacterPresenter(this)
+    private var isLastPage = false
+    private var isLoading = false
     private lateinit var  mAdapter : CharacterAdapter
     private lateinit var progress : ProgressBar
 
@@ -53,9 +36,7 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val component = DaggerAppComponent.builder().netModule(NetModule()).appModule(AppModule(context)).roomModule(
-            RoomModule()).build()
-        component.inject(this)
+        Injector.get().inject(presenter)
     }
 
 
@@ -121,6 +102,7 @@ class AllCharactersListFragment : MvpAppCompatFragment(), AllCharactersFragmentV
 
     override fun onDestroy() {
         mAdapter.clear()
+        presenter.inDestroy()
         super.onDestroy()
     }
 

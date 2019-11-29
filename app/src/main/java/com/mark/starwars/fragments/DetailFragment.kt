@@ -7,31 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import androidx.fragment.app.Fragment
 import com.mark.starwars.R
-import com.mark.starwars.di.AppModule
-import com.mark.starwars.di.DaggerAppComponent
-import com.mark.starwars.di.RoomModule
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.DetailPresenter
+import com.mark.starwars.utils.Injector
 import com.mark.starwars.utils.Repository
-import com.mark.starwars.views.DetailFragmentView
+import com.mark.starwars.views.IDetailView
 import kotlinx.android.synthetic.main.detail_character.*
 import javax.inject.Inject
 
-class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
+class DetailFragment : Fragment(), IDetailView {
     @Inject
     lateinit var characterRepository : Repository
     val TAG_CHARACTER = "DETAILS"
     lateinit var character : Character
-    @InjectPresenter
-    lateinit var presenter : DetailPresenter
-    @ProvidePresenter
-    fun providePresenter(): DetailPresenter {
-        return DetailPresenter(repository = characterRepository)
-    }
+    private val presenter = DetailPresenter(this)
 
     companion object {
         fun newInstance(character: Character) : DetailFragment {
@@ -45,9 +36,8 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Injector.get().inject(this)
         arguments?.getSerializable(TAG_CHARACTER)?.let { character = it as Character }
-        val component = DaggerAppComponent.builder().appModule(AppModule(activity!!.applicationContext)).roomModule(RoomModule()).build()
-        component.inject(this)
     }
 
 
@@ -70,10 +60,10 @@ class DetailFragment : MvpAppCompatFragment(), DetailFragmentView {
         name_text.text = character.name
         gender_text.text = character.gender
         when {
-            character.gender == "female" -> gender_image.setImageResource(R.drawable.ic_female_gender)
-            character.gender == "n/a" -> gender_image.setImageResource(R.drawable.ic_na_gender)
-            character.gender == "hermaphrodite" -> gender_image.setImageResource(R.drawable.ic_hermophrod_gender)
-            character.gender == "male" -> gender_image.setImageResource(R.drawable.ic_male_gender)
+//            character.gender == "female" -> gender_image.setImageResource(R.drawable.ic_female_gender)
+//            character.gender == "n/a" -> gender_image.setImageResource(R.drawable.ic_na_gender)
+//            character.gender == "hermaphrodite" -> gender_image.setImageResource(R.drawable.ic_hermophrod_gender)
+//            character.gender == "male" -> gender_image.setImageResource(R.drawable.ic_male_gender)
         }
         height_text.text = character.height
         mass_text.text = character.mass

@@ -1,14 +1,15 @@
 package com.mark.starwars.presenters
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.mark.starwars.model.Character
 import com.mark.starwars.utils.Repository
-import com.mark.starwars.views.DetailFragmentView
+import com.mark.starwars.views.IDetailView
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
-@InjectViewState
-class DetailPresenter(val repository: Repository) : MvpPresenter<DetailFragmentView>() {
+class DetailPresenter(val viewState: IDetailView) {
+    @Inject
+    lateinit var repository: Repository
+
 
     fun init(){
         viewState.initDetails()
