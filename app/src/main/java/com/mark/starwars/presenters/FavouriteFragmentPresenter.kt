@@ -1,39 +1,26 @@
 package com.mark.starwars.presenters
 
-import android.util.Log
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.mark.starwars.model.Character
-import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.utils.Repository
+import com.mark.starwars.views.IFavouriteListView
 
-import com.mark.starwars.views.FavouriteView
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
-@InjectViewState
-class FavouriteFragmentPresenter(private val repository: Repository, val apiService: RetrofitService) : MvpPresenter<FavouriteView>() {
+class FavouriteFragmentPresenter(private val viewState : IFavouriteListView) {
+    @Inject
+    lateinit var repository: Repository
 
     fun openDetails(c: Character) {
         viewState.showDetails(c)
     }
 
     fun loadItems() {
-        GlobalScope.launch(Dispatchers.IO) {val l =  repository.getAllItems()
-        withContext(Dispatchers.Main){
-            viewState.loadList(l)
-            }
-        }
+
     }
 
     fun loadItems(title : String){
-        GlobalScope.launch(Dispatchers.IO) {
-            val response = apiService.getSeatchResult(title).await()
-            val result = response.body()!!.results
-            withContext(Dispatchers.Main){
-                Log.d("SEARCH", "$result")
-                viewState.loadList(result)
-            }
-        }
+        val response = repository.getSearchResult(title)
     }
 
     fun delete(c: Character){

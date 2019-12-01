@@ -1,20 +1,27 @@
 package com.mark.starwars.presenters
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.mark.starwars.model.Character
-import com.mark.starwars.net.RetrofitService
 import com.mark.starwars.utils.Repository
-import com.mark.starwars.views.AllCharactersFragmentView
+import com.mark.starwars.views.IAllCharacterView
+import io.reactivex.android.MainThreadDisposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.annotations.SchedulerSupport.IO
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import java.io.IOException
+import javax.inject.Inject
 
-@InjectViewState
-class AllCharacterPresenter(val repository: Repository, val apiService : RetrofitService): MvpPresenter<AllCharactersFragmentView>(){
+class AllCharacterPresenter(private val view : IAllCharacterView) {
+    @Inject
+    lateinit var repository: Repository
     private val FIRST_PAGE = 1
     private var CURRENT_PAGE = FIRST_PAGE
     private val MAX_PAGE = 9
+    private val compositeDisposable = CompositeDisposable()
+    private lateinit var disposable: Disposable
 
     fun paginate(){
         if(CURRENT_PAGE != MAX_PAGE) {
@@ -25,53 +32,44 @@ class AllCharacterPresenter(val repository: Repository, val apiService : Retrofi
     }
 
     fun openDetails(character : Character){
-        viewState.showDetails(character)
+        view.showDetails(character)
     }
 
 
     fun addCharacter(character: Character){
         character.isFavourite = true
-        GlobalScope.launch(Dispatchers.IO){
-            repository.addItem(character)
-        }
+        repository.addItem(character)
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     fun findDuplicates(c: Character) : Int{
-        return runBlocking(Dispatchers.IO){
-            val list = repository.getAllItems()
-            Log.d("COUNT", "$list")
-            return@runBlocking list.count {it.name == c.name}
-            }
+        return 0
     }
 
     fun loadFirstCharacters(){
-        viewState.showProgress()
-            GlobalScope.launch(Dispatchers.IO) {
-                val requestCharacters = apiService.getCharacters(CURRENT_PAGE).await()
-                val characters = requestCharacters.body()
-                Log.d("potok", "newList")
-                withContext(Dispatchers.Main) {
-                    try {
-                        if (requestCharacters.isSuccessful) {
-                            viewState.hideProgress()
-                            viewState.onGetDataSuccess(characters!!.results)
-                        }
-                        else viewState.showErrorDialog()
-                    } catch (e : IOException){viewState.showErrorDialog()}
-                }
+         disposable = repository.getCharactersFromApi(CURRENT_PAGE)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {characters ->
+                view.onGetDataSuccess(characters)
             }
-        }
+        disposable.addTo(compositeDisposable)
+    }
 
     private fun loadMoreCharacters(){
-        viewState.showProgress()
-        GlobalScope.launch(Dispatchers.IO) {
-            val requestCharacters = apiService.getCharacters(CURRENT_PAGE)
-            val characters = requestCharacters.await().body()
-            withContext(Dispatchers.Main) {
-                viewState.hideProgress()
-                viewState.onGetDataSuccess(characters!!.results)
-                Log.d("list", "loadMore")
+        view.showProgress()
+         disposable = repository.getCharactersFromApi(CURRENT_PAGE)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{characters ->
+                view.hideProgress()
+                view.onGetDataSuccess(characters)
             }
-        }
+        disposable.addTo(compositeDisposable)
+    }
+
+    fun inDestroy(){
+        compositeDisposable.dispose()
     }
 }
