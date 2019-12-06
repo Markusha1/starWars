@@ -8,15 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
-import com.mark.starwars.di.AppModule
-import com.mark.starwars.di.DaggerAppComponent
-import com.mark.starwars.di.NetModule
-import com.mark.starwars.di.RoomModule
+import com.mark.starwars.db.CharacterRepository
 import com.mark.starwars.model.Character
 import com.mark.starwars.net.RetrofitService
-import com.mark.starwars.presenters.FavouriteFragmentPresenter
+import com.mark.starwars.presenters.FavouritePresenter
 import com.mark.starwars.utils.FavouriteAdapter
-import com.mark.starwars.utils.Repository
+import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IFavouriteListView
 import javax.inject.Inject
 
@@ -24,9 +21,9 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
     @Inject
     lateinit var apiService : RetrofitService
     @Inject
-    lateinit var repository: Repository
+    lateinit var repository: CharacterRepository
     private lateinit var mAdapter : FavouriteAdapter
-    lateinit var presenter: FavouriteFragmentPresenter
+    lateinit var presenter: FavouritePresenter
 
     override fun onStart() {
         super.onStart()
@@ -41,9 +38,7 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(RoomModule()).netModule(
-            NetModule()).build()
-        component.inject(this)
+        Injector.get().inject(presenter)
     }
 
 

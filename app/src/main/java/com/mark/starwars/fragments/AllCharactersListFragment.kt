@@ -42,8 +42,8 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val itemview = inflater.inflate(R.layout.all_characters, container, false)
-        val myRecyclerView = itemview.findViewById(R.id.character_list) as RecyclerView
         progress = itemview.findViewById(R.id.progressBar) as ProgressBar
+        val myRecyclerView = itemview.findViewById(R.id.character_list) as RecyclerView
         val layoutManager = LinearLayoutManager(activity)
         myRecyclerView.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
@@ -67,12 +67,12 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         myRecyclerView.adapter = mAdapter
         return itemview
     }
-
-    override fun onGetDataSuccess(list: List<Character>) {
-        mAdapter.addItems(list)
+    override fun onGetDataSuccess(characters: List<Character>) {
+        mAdapter.addItems(characters)
     }
 
     override fun showDetails(character : Character){
+        DetailFragment.newInstance(character)
         activity!!.supportFragmentManager.beginTransaction()
             .hide(this)
             .add(R.id.fragment_container, DetailFragment.newInstance(character))
@@ -92,7 +92,7 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
     override fun showErrorDialog() {
         val alertDialog = AlertDialog.Builder(activity)
             .setTitle(R.string.connection_error)
-            .setNegativeButton(R.string.ok){dialogInterface, i ->
+            .setNegativeButton(R.string.ok){ dialogInterface, _ ->
                 dialogInterface.cancel()
             }
         val dialog = alertDialog.create()

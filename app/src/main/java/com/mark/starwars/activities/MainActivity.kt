@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         fm = supportFragmentManager
+        setFirstFragment()
         nav_bottom.setOnNavigationItemSelectedListener { item ->
             when(item.itemId){
                 R.id.nav_list -> {
