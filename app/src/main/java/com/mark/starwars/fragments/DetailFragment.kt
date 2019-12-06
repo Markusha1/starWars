@@ -9,26 +9,27 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mark.starwars.R
+import com.mark.starwars.db.CharacterRepository
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.DetailPresenter
 import com.mark.starwars.utils.Injector
-import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.IDetailView
 import kotlinx.android.synthetic.main.detail_character.*
 import javax.inject.Inject
 
 class DetailFragment : Fragment(), IDetailView {
-    @Inject
-    lateinit var characterRepository : Repository
-    val TAG_CHARACTER = "DETAILS"
+    private lateinit var favButton : ImageButton
     lateinit var character : Character
-    private val presenter = DetailPresenter(this)
+    lateinit var presenter : DetailPresenter
 
     companion object {
+        val TAG_CHARACTER = "DETAILS"
+
         fun newInstance(character: Character) : DetailFragment {
             val fragment = DetailFragment()
-            val args = Bundle()
-            args.putSerializable("DETAILS", character)
+            val args = Bundle().apply {
+                putSerializable(TAG_CHARACTER, character)
+            }
             fragment.arguments = args
             return fragment
         }
@@ -36,50 +37,47 @@ class DetailFragment : Fragment(), IDetailView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Injector.get().inject(this)
         arguments?.getSerializable(TAG_CHARACTER)?.let { character = it as Character }
+        presenter = DetailPresenter(this, character)
+        Injector.get().inject(presenter)
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.detail_character, container, false)
         presenter.init()
-        val favButton = v.findViewById(R.id.star_button) as ImageButton
+        favButton = v.findViewById(R.id.star_button) as ImageButton
         val backButton = v.findViewById(R.id.back_button) as ImageButton
-        favButton.setOnClickListener{ if (!character.isFavourite) {
-            presenter.addToFavourite(character)
-        } else {
-            presenter.removeFromFavourite(character)
-            }
+        favButton.setOnClickListener{
+            presenter.clickStar()
         }
-        backButton.setOnClickListener {activity!!.supportFragmentManager.popBackStackImmediate() }
+        backButton.setOnClickListener {
+            activity!!.supportFragmentManager.popBackStackImmediate()
+        }
         return v
     }
 
-    override fun initDetails() {
+    override fun initDetails(image : Int?, character: Character) {
         name_text.text = character.name
         gender_text.text = character.gender
-        when {
-//            character.gender == "female" -> gender_image.setImageResource(R.drawable.ic_female_gender)
-//            character.gender == "n/a" -> gender_image.setImageResource(R.drawable.ic_na_gender)
-//            character.gender == "hermaphrodite" -> gender_image.setImageResource(R.drawable.ic_hermophrod_gender)
-//            character.gender == "male" -> gender_image.setImageResource(R.drawable.ic_male_gender)
-        }
         height_text.text = character.height
+        birth_year.text = character.birth_year
         mass_text.text = character.mass
-        year_text.text = character.birth_year
-        if (character.isFavourite) star_button.setImageResource(R.drawable.ic_fill_favourite)
+        if (image != null) gender_image.setImageResource(image)
+    }
+
+    override fun setStarImage(isExist: Boolean) {
+        if (isExist) favButton.setImageResource(R.drawable.ic_fill_star)
+        else favButton.setImageResource(R.drawable.ic_hollow_favourite)
     }
 
     override fun addFavourite() {
         star_button.setImageResource(R.drawable.ic_fill_favourite)
-        character.isFavourite = true
         Toast.makeText(context,"Add to favorite",Toast.LENGTH_SHORT).show()
     }
 
     override fun removeFavourite() {
         star_button.setImageResource(R.drawable.ic_hollow_favourite)
-        character.isFavourite = false
         Toast.makeText(context, "Remove to favorite", Toast.LENGTH_SHORT).show()
     }
 

@@ -1,31 +1,52 @@
 package com.mark.starwars.presenters
 
+import com.mark.starwars.db.CharacterRepository
 import com.mark.starwars.model.Character
-import com.mark.starwars.utils.Repository
+import com.mark.starwars.db.Repository
+import com.mark.starwars.utils.GenderToImage
 import com.mark.starwars.views.IDetailView
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
-class DetailPresenter(val viewState: IDetailView) {
+class DetailPresenter(private val view: IDetailView, private val character: Character) {
     @Inject
-    lateinit var repository: Repository
+    lateinit var repository: CharacterRepository
+    private val compositeDisposable = CompositeDisposable()
 
 
     fun init(){
-        viewState.initDetails()
+        if (repository.isAlreadyExists(character) > 0) view.setStarImage(true)
+        else view.setStarImage(false)
+        val image = GenderToImage.convert(character.gender)
+        view.initDetails(character = character, image = image)
     }
 
-    fun addToFavourite(c: Character){
-        GlobalScope.launch(Dispatchers.IO) {
-            repository.addItem(c)
-        }
-        viewState.addFavourite()
+    private fun addToFavourite(){
+        val addable = repository.addItem(character)
+            .observeOn(Schedulers.io())
+            .subscribe {
+                character.isFavourite = true
+                view.addFavourite()
+            }
+        compositeDisposable.add(addable)
     }
 
-    fun removeFromFavourite(c : Character){
-        GlobalScope.launch(Dispatchers.IO){
-            repository.deleteItem(c)
-        }
-        viewState.removeFavourite()
+    private fun removeFromFavourite(){
+        val removable = repository.deleteItem(character)
+            .subscribe {
+                character.isFavourite = false
+                view.removeFavourite()
+            }
+        compositeDisposable.add(removable)
     }
+
+    fun clickStar(){
+        if (!character.isFavourite){
+            addToFavourite()
+        }
+        else removeFromFavourite()
+    }
+
 }

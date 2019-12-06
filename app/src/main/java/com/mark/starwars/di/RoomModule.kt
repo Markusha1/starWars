@@ -16,7 +16,6 @@ class RoomModule {
         return Room.databaseBuilder(context, AppDataBase::class.java, "characters")
             .fallbackToDestructiveMigration()
             .build()
-
     }
 
     @Singleton

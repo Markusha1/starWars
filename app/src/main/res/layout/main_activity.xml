@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    style="@style/Theme.AppCompat.Light.NoActionBar"
-    android:background="@drawable/star_wars_background">
-
+    style="@style/Theme.AppCompat.Light.NoActionBar">
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
@@ -15,12 +13,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/background"-->
-<!--            android:scaleType="fitXY"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            app:srcCompat="@drawable/background_star_wars" />-->
+        <ImageView
+            android:id="@+id/background"
+            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/background_star_wars" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

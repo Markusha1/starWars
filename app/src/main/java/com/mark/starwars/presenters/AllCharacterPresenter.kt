@@ -1,22 +1,19 @@
 package com.mark.starwars.presenters
 
 import android.util.Log
+import com.mark.starwars.db.CharacterRepository
 import com.mark.starwars.model.Character
-import com.mark.starwars.utils.Repository
 import com.mark.starwars.views.IAllCharacterView
-import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.annotations.SchedulerSupport.IO
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
 import javax.inject.Inject
 
-class AllCharacterPresenter(private val view : IAllCharacterView) {
+class AllCharacterPresenter(private var view : IAllCharacterView?) {
     @Inject
-    lateinit var repository: Repository
+    lateinit var repository: CharacterRepository
     private val FIRST_PAGE = 1
     private var CURRENT_PAGE = FIRST_PAGE
     private val MAX_PAGE = 9
@@ -32,7 +29,7 @@ class AllCharacterPresenter(private val view : IAllCharacterView) {
     }
 
     fun openDetails(character : Character){
-        view.showDetails(character)
+        view?.showDetails(character)
     }
 
 
@@ -43,33 +40,37 @@ class AllCharacterPresenter(private val view : IAllCharacterView) {
             .subscribe()
     }
 
-    fun findDuplicates(c: Character) : Int{
-        return 0
+    fun isAlreadyAdded(c: Character) : Int{
+        repository.isAlreadyExists(c)
+            .subscribe()
     }
 
     fun loadFirstCharacters(){
          disposable = repository.getCharactersFromApi(CURRENT_PAGE)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {characters ->
-                view.onGetDataSuccess(characters)
-            }
+             .subscribe (
+                 {list ->
+                 view?.onGetDataSuccess(list)
+             },
+                 {
+                     view?.showErrorDialog()
+                 }
+             )
         disposable.addTo(compositeDisposable)
     }
 
     private fun loadMoreCharacters(){
-        view.showProgress()
+         view?.showProgress()
          disposable = repository.getCharactersFromApi(CURRENT_PAGE)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{characters ->
-                view.hideProgress()
-                view.onGetDataSuccess(characters)
-            }
+             .subscribe { list ->
+                 view?.hideProgress()
+                 view?.onGetDataSuccess(list)
+             }
         disposable.addTo(compositeDisposable)
     }
 
     fun inDestroy(){
         compositeDisposable.dispose()
+        view = null
     }
+
 }

@@ -11,7 +11,7 @@ import com.mark.starwars.R
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.AllCharacterPresenter
 
-class CharacterAdapter(val presenter : AllCharacterPresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
+class CharacterAdapter(private val presenter : AllCharacterPresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
     private val items : MutableList<Character> = mutableListOf()
 
 
@@ -34,11 +34,12 @@ class CharacterAdapter(val presenter : AllCharacterPresenter): RecyclerView.Adap
         }
         holder.itemView.setOnLongClickListener {
             val character = items[position]
-            val counter = presenter.findDuplicates(character)
+            val counter = presenter.isAlreadyAdded(character)
             Log.d("COUNTER", "$counter")
-            if(counter > 0){
+            if(counter > 0) {
                 showAlreadyMenu(holder.itemView)
-            }else showAddMenu(holder.itemView, character)
+            }
+            else showAddMenu(holder.itemView, character)
             true
         }
     }

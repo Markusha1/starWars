@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/star_wars_background">
+    android:background="@drawable/background_star_wars">
 
     <View
         android:id="@+id/view"
@@ -154,44 +154,44 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back_arrow" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/calendar_image"-->
-<!--        android:layout_width="50dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/weight_image"-->
-<!--        app:srcCompat="@drawable/ic_birth_year" />-->
+    <ImageView
+        android:id="@+id/calendar_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weight_image"
+        app:srcCompat="@drawable/ic_birth_year" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/gender_image"-->
-<!--        android:layout_width="50dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="36dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/name_text"-->
-<!--        app:srcCompat="@drawable/ic_male_gender" />-->
+    <ImageView
+        android:id="@+id/gender_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_text"
+        app:srcCompat="@drawable/ic_male_gender" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/height_image"-->
-<!--        android:layout_width="50dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/gender_image"-->
-<!--        app:srcCompat="@drawable/ic_height" />-->
+    <ImageView
+        android:id="@+id/height_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gender_image"
+        app:srcCompat="@drawable/ic_height" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/weight_image"-->
-<!--        android:layout_width="50dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/height_image"-->
-<!--        app:srcCompat="@drawable/ic_weight" />-->
+    <ImageView
+        android:id="@+id/weight_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/height_image"
+        app:srcCompat="@drawable/ic_weight" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
