@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mark.starwars.R
@@ -15,29 +16,32 @@ import com.mark.starwars.presenters.DetailPresenter
 import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IDetailView
 import kotlinx.android.synthetic.main.detail_character.*
+import org.w3c.dom.Text
 import javax.inject.Inject
 
 class DetailFragment : Fragment(), IDetailView {
     private lateinit var favButton : ImageButton
-    lateinit var character : Character
+    private lateinit var textvie : TextView
     lateinit var presenter : DetailPresenter
+    lateinit var character : Character
 
     companion object {
         val TAG_CHARACTER = "DETAILS"
 
-        fun newInstance(character: Character) : DetailFragment {
-            val fragment = DetailFragment()
-            val args = Bundle().apply {
-                putSerializable(TAG_CHARACTER, character)
+        @JvmStatic
+        fun newInstance(character: Character) = DetailFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(TAG_CHARACTER, character)
+                }
             }
-            fragment.arguments = args
-            return fragment
         }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        arguments?.getSerializable(TAG_CHARACTER)?.let { character = it as Character }
+        arguments?.getSerializable(TAG_CHARACTER).let {
+            character = (it as Character)
+        }
+        println("$character")
         presenter = DetailPresenter(this, character)
         Injector.get().inject(presenter)
     }
@@ -45,8 +49,8 @@ class DetailFragment : Fragment(), IDetailView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.detail_character, container, false)
-        presenter.init()
         favButton = v.findViewById(R.id.star_button) as ImageButton
+        textvie = v.findViewById(R.id.name_text) as TextView
         val backButton = v.findViewById(R.id.back_button) as ImageButton
         favButton.setOnClickListener{
             presenter.clickStar()
@@ -54,11 +58,12 @@ class DetailFragment : Fragment(), IDetailView {
         backButton.setOnClickListener {
             activity!!.supportFragmentManager.popBackStackImmediate()
         }
+        presenter.init()
         return v
     }
 
     override fun initDetails(image : Int?, character: Character) {
-        name_text.text = character.name
+        textvie.text = character.name
         gender_text.text = character.gender
         height_text.text = character.height
         birth_year.text = character.birth_year

@@ -72,10 +72,10 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
     }
 
     override fun showDetails(character : Character){
-        DetailFragment.newInstance(character)
+        val fragment = DetailFragment.newInstance(character)
         activity!!.supportFragmentManager.beginTransaction()
             .hide(this)
-            .add(R.id.fragment_container, DetailFragment.newInstance(character))
+            .add(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
         }

@@ -90,11 +90,11 @@ class SearchCharacterFragment : Fragment(), IFavouriteListView {
         mAdapter.upLoadSearchResult(list)
     }
 
-    override fun showDetails(c: Character) {
+    override fun showDetails(character: Character) {
         activity!!.supportFragmentManager.beginTransaction()
             .addToBackStack(null)
             .hide(this)
-            .add(R.id.fragment_container, DetailFragment.newInstance(c))
+            .add(R.id.fragment_container, DetailFragment.newInstance(character))
             .commit()
     }
 }

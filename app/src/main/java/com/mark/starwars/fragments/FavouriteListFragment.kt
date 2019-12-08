@@ -57,10 +57,10 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
     }
 
 
-    override fun showDetails(c: Character) {
+    override fun showDetails(character: Character) {
            activity!!.supportFragmentManager.beginTransaction()
                .addToBackStack(null)
-               .replace(R.id.fragment_container, DetailFragment.newInstance(c))
+               .replace(R.id.fragment_container, DetailFragment.newInstance(character))
                .commit()
     }
 
