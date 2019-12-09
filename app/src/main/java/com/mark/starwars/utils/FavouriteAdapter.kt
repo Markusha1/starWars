@@ -11,7 +11,7 @@ import com.mark.starwars.R
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.FavouritePresenter
 
-class FavouriteAdapter(val presenter : FavouritePresenter) : RecyclerView.Adapter<FavouriteAdapter.FavoriteHolder>() {
+class FavouriteAdapter(private val presenter : FavouritePresenter) : RecyclerView.Adapter<FavouriteAdapter.FavoriteHolder>() {
     private val items : MutableList<Character> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteHolder {

@@ -21,14 +21,15 @@ class DetailPresenter(private val view: IDetailView, private val character: Char
 
 
     fun init(){
-        view.setStarImage(inDatabase(character))
+        inDatabase(character)
         val image = GenderToImage.convert(character.gender)
         view.initDetails(character = character, image = image)
     }
 
     private fun addToFavourite(){
         val addable = repository.addItem(character)
-            .observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 character.isFavourite = true
                 view.addFavourite()
@@ -38,6 +39,8 @@ class DetailPresenter(private val view: IDetailView, private val character: Char
 
     private fun removeFromFavourite(){
         val removable = repository.deleteItem(character)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 character.isFavourite = false
                 view.removeFavourite()
@@ -52,14 +55,19 @@ class DetailPresenter(private val view: IDetailView, private val character: Char
         else removeFromFavourite()
     }
 
-    private fun inDatabase(c: Character) : Boolean {
-        var b = false
+    private fun inDatabase(c: Character) {
         compositeDisposable.add(repository.isAlreadyExists(c)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
-                b = it > 0
+                if (it > 0) {
+                    view.setStarImage(true)
+                    character.isFavourite = true
+                }
+                else {
+                    view.setStarImage(false)
+                }
             })
-        return b
     }
+
 }

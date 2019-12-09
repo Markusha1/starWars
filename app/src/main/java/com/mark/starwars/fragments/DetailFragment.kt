@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.mark.starwars.R
 import com.mark.starwars.db.CharacterRepository
@@ -21,7 +19,12 @@ import javax.inject.Inject
 
 class DetailFragment : Fragment(), IDetailView {
     private lateinit var favButton : ImageButton
-    private lateinit var textvie : TextView
+    private lateinit var textView : TextView
+    private lateinit var genderView : TextView
+    private lateinit var heightView : TextView
+    private lateinit var birthView : TextView
+    private lateinit var massView : TextView
+    private lateinit var genderImage : ImageView
     lateinit var presenter : DetailPresenter
     lateinit var character : Character
 
@@ -50,7 +53,12 @@ class DetailFragment : Fragment(), IDetailView {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.detail_character, container, false)
         favButton = v.findViewById(R.id.star_button) as ImageButton
-        textvie = v.findViewById(R.id.name_text) as TextView
+        textView = v.findViewById(R.id.name_text) as TextView
+        genderView = v.findViewById(R.id.gender_text) as TextView
+        heightView = v.findViewById(R.id.height_text) as TextView
+        birthView = v.findViewById(R.id.birth_year) as TextView
+        massView = v.findViewById(R.id.mass_text) as TextView
+        genderImage = v.findViewById(R.id.gender_image) as ImageView
         val backButton = v.findViewById(R.id.back_button) as ImageButton
         favButton.setOnClickListener{
             presenter.clickStar()
@@ -63,12 +71,12 @@ class DetailFragment : Fragment(), IDetailView {
     }
 
     override fun initDetails(image : Int?, character: Character) {
-        textvie.text = character.name
-        gender_text.text = character.gender
-        height_text.text = character.height
-        birth_year.text = character.birth_year
-        mass_text.text = character.mass
-        if (image != null) gender_image.setImageResource(image)
+        textView.text = character.name
+        genderView.text = character.gender
+        heightView.text = character.height
+        birthView.text = character.birth_year
+        massView.text = character.mass
+        if (image != null) genderImage.setImageResource(image)
     }
 
     override fun setStarImage(isExist: Boolean) {

@@ -16,18 +16,23 @@ import com.mark.starwars.di.NetModule
 import com.mark.starwars.di.RoomModule
 import com.mark.starwars.model.Character
 import com.mark.starwars.net.RetrofitService
+import com.mark.starwars.presenters.AllCharacterPresenter
 import com.mark.starwars.presenters.FavouritePresenter
+import com.mark.starwars.presenters.SearchPresenter
+import com.mark.starwars.utils.CharacterAdapter
 import com.mark.starwars.utils.FavouriteAdapter
+import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IFavouriteListView
+import com.mark.starwars.views.ISearchView
 import javax.inject.Inject
 
-class SearchCharacterFragment : Fragment(), IFavouriteListView {
+class SearchCharacterFragment : Fragment(), ISearchView {
     @Inject
     lateinit var apiService : RetrofitService
     @Inject
     lateinit var repository: CharacterRepository
 
-    lateinit var presenter : FavouritePresenter
+    lateinit var presenter : AllCharacterPresenter
 
     private lateinit var mAdapter : FavouriteAdapter
 
@@ -46,9 +51,8 @@ class SearchCharacterFragment : Fragment(), IFavouriteListView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val component = DaggerAppComponent.builder().appModule(AppModule(context)).roomModule(
-            RoomModule()).netModule(NetModule()).build()
-        component.inject(this)
+        presenter = AllCharacterPresenter(this)
+        Injector.get().inject(presenter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,7 +60,7 @@ class SearchCharacterFragment : Fragment(), IFavouriteListView {
         val myRecycler = itemview.findViewById(R.id.recycler_view) as RecyclerView
         val layoutManager = LinearLayoutManager(activity)
         myRecycler.layoutManager = layoutManager
-        mAdapter = FavouriteAdapter(presenter)
+        mAdapter = CharacterAdapter(presenter)
         myRecycler.adapter = mAdapter
         val tb = itemview.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
         (activity as AppCompatActivity).setSupportActionBar(tb)
@@ -78,8 +82,8 @@ class SearchCharacterFragment : Fragment(), IFavouriteListView {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                var inputText = newText!!.toLowerCase().trim()
-                presenter.loadItems(inputText)
+                if (!newText.isNullOrBlank()) newText.toLowerCase().trim()
+                presenter.loadItems()
                 return true
             }
         })
@@ -96,5 +100,9 @@ class SearchCharacterFragment : Fragment(), IFavouriteListView {
             .hide(this)
             .add(R.id.fragment_container, DetailFragment.newInstance(character))
             .commit()
+    }
+
+    override fun showProgressBar() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

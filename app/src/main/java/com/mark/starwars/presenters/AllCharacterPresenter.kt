@@ -4,8 +4,6 @@ import android.util.Log
 import com.mark.starwars.db.CharacterRepository
 import com.mark.starwars.model.Character
 import com.mark.starwars.views.IAllCharacterView
-import io.reactivex.Observer
-import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -47,25 +45,16 @@ class AllCharacterPresenter(private var view : IAllCharacterView?) {
         repository.isAlreadyExists(c)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<Int>{
-                override fun onSuccess(t: Int) {
-                    count = t
-                }
-
-                override fun onSubscribe(d: Disposable) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onError(e: Throwable) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-            })
+            .map{ count = it }
+            .subscribe()
 
         return count
     }
 
     fun loadFirstCharacters(){
          disposable = repository.getCharactersFromApi(CURRENT_PAGE)
+             .subscribeOn(Schedulers.io())
+             .observeOn(AndroidSchedulers.mainThread())
              .subscribe (
                  {list ->
                  view?.onGetDataSuccess(list)
@@ -80,6 +69,8 @@ class AllCharacterPresenter(private var view : IAllCharacterView?) {
     private fun loadMoreCharacters(){
          view?.showProgress()
          disposable = repository.getCharactersFromApi(CURRENT_PAGE)
+             .subscribeOn(Schedulers.io())
+             .observeOn(AndroidSchedulers.mainThread())
              .subscribe { list ->
                  view?.hideProgress()
                  view?.onGetDataSuccess(list)

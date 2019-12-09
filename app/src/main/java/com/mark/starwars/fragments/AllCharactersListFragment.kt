@@ -99,7 +99,6 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         dialog.show()
     }
 
-
     override fun onDestroy() {
         mAdapter.clear()
         presenter.inDestroy()
