@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager
 import com.mark.starwars.R
 import com.mark.starwars.fragments.AllCharactersListFragment
 import com.mark.starwars.fragments.FavouriteListFragment
+import com.mark.starwars.fragments.IBackpressedSupport
 import com.mark.starwars.fragments.SearchCharacterFragment
 import kotlinx.android.synthetic.main.main_activity.*
 
@@ -50,5 +51,14 @@ class MainActivity : AppCompatActivity() {
         fm.beginTransaction()
             .replace(R.id.fragment_container, AllCharactersListFragment.newInstance())
             .commit()
+    }
+
+    override fun onBackPressed() {
+        when {
+            supportFragmentManager.findFragmentById(R.id.fragment_container) is IBackpressedSupport ->
+                (supportFragmentManager.findFragmentById(R.id.fragment_container) as IBackpressedSupport).onBackPressed()
+            else -> finish()
+        }
+
     }
 }

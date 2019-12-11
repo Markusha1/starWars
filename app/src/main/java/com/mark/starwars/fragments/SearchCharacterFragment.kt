@@ -24,6 +24,7 @@ import com.mark.starwars.utils.FavouriteAdapter
 import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IFavouriteListView
 import com.mark.starwars.views.ISearchView
+import kotlinx.android.synthetic.main.search_fragmnet.*
 import javax.inject.Inject
 
 class SearchCharacterFragment : Fragment(), ISearchView {
@@ -34,7 +35,7 @@ class SearchCharacterFragment : Fragment(), ISearchView {
 
     lateinit var presenter : AllCharacterPresenter
 
-    private lateinit var mAdapter : FavouriteAdapter
+    private lateinit var mAdapter : CharacterAdapter
 
 
     companion object {
@@ -51,7 +52,6 @@ class SearchCharacterFragment : Fragment(), ISearchView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        presenter = AllCharacterPresenter(this)
         Injector.get().inject(presenter)
     }
 
@@ -60,7 +60,6 @@ class SearchCharacterFragment : Fragment(), ISearchView {
         val myRecycler = itemview.findViewById(R.id.recycler_view) as RecyclerView
         val layoutManager = LinearLayoutManager(activity)
         myRecycler.layoutManager = layoutManager
-        mAdapter = CharacterAdapter(presenter)
         myRecycler.adapter = mAdapter
         val tb = itemview.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
         (activity as AppCompatActivity).setSupportActionBar(tb)
@@ -83,26 +82,15 @@ class SearchCharacterFragment : Fragment(), ISearchView {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (!newText.isNullOrBlank()) newText.toLowerCase().trim()
-                presenter.loadItems()
+                presenter.loadCharacters()
                 return true
             }
         })
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun loadList(list: List<Character>) {
-        mAdapter.upLoadSearchResult(list)
-    }
-
-    override fun showDetails(character: Character) {
-        activity!!.supportFragmentManager.beginTransaction()
-            .addToBackStack(null)
-            .hide(this)
-            .add(R.id.fragment_container, DetailFragment.newInstance(character))
-            .commit()
-    }
 
     override fun showProgressBar() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        progress.visibility = View.VISIBLE
     }
 }

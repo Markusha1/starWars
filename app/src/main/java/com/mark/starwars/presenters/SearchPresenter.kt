@@ -1,11 +1,12 @@
 package com.mark.starwars.presenters
 
-import com.mark.starwars.db.CharacterRepository
-import com.mark.starwars.views.ISearchView
-import javax.inject.Inject
+import com.mark.starwars.views.IListView
 
-class SearchPresenter(val view: ISearchView) {
-    @Inject
-    lateinit var repository: CharacterRepository
+class SearchPresenter(val view: IListView?) : BasePresenter(view){
+
+    override fun loadCharacters() {
+        repository.getSearchResult()
+    }
+
 
 }

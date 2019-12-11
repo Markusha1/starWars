@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.detail_character.*
 import org.w3c.dom.Text
 import javax.inject.Inject
 
-class DetailFragment : Fragment(), IDetailView {
+class DetailFragment : BaseFragment(), IDetailView {
     private lateinit var favButton : ImageButton
     private lateinit var textView : TextView
     private lateinit var genderView : TextView
@@ -92,6 +92,10 @@ class DetailFragment : Fragment(), IDetailView {
     override fun removeFavourite() {
         star_button.setImageResource(R.drawable.ic_hollow_favourite)
         Toast.makeText(context, "Remove to favorite", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onBackPressed() {
+        fragmentManager?.popBackStack()
     }
 
 }

@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.utils.CharacterAdapter
@@ -20,7 +19,7 @@ import com.mark.starwars.presenters.AllCharacterPresenter
 import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IAllCharacterView
 
-class AllCharactersListFragment : Fragment(), IAllCharacterView {
+class AllCharactersListFragment : BaseFragment(), IAllCharacterView {
     private val presenter: AllCharacterPresenter = AllCharacterPresenter(this)
     private var isLastPage = false
     private var isLoading = false
@@ -47,7 +46,7 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         val layoutManager = LinearLayoutManager(activity)
         myRecyclerView.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
-        presenter.loadFirstCharacters()
+        presenter.loadCharacters()
         myRecyclerView.addOnScrollListener(object :
             PaginationScrollListener(layoutManager) {
             override fun isLastPage(): Boolean {
@@ -67,7 +66,7 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         myRecyclerView.adapter = mAdapter
         return itemview
     }
-    override fun onGetDataSuccess(characters: List<Character>) {
+    override fun loadList(characters: List<Character>) {
         mAdapter.addItems(characters)
     }
 
@@ -97,6 +96,11 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
             }
         val dialog = alertDialog.create()
         dialog.show()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        activity?.finish()
     }
 
     override fun onDestroy() {

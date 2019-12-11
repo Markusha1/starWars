@@ -1,10 +1,7 @@
 package com.mark.starwars.views
 
-import com.mark.starwars.model.Character
 
-interface IAllCharacterView : IView{
-    fun showDetails(character: Character)
-    fun onGetDataSuccess(characters: List<Character>)
+interface IAllCharacterView : IListView{
     fun hideProgress()
     fun showProgress()
     fun showErrorDialog()

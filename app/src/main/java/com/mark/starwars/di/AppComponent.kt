@@ -8,8 +8,9 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, RoomModule::class, NetModule::class])
+@Component(modules = [AppModule::class, RoomModule::class, NetModule::class, RepositoryModule::class])
 interface AppComponent {
+
     fun inject(detailPresenter: DetailPresenter)
     fun inject(presenter: AllCharacterPresenter)
     fun inject(favPresenter: FavouritePresenter)

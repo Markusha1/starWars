@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.AllCharacterPresenter
+import com.mark.starwars.presenters.BasePresenter
+import io.reactivex.rxkotlin.subscribeBy
 
-class CharacterAdapter(private val presenter : AllCharacterPresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
+class CharacterAdapter(private val presenter : BasePresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
     private val items : MutableList<Character> = mutableListOf()
 
 
@@ -34,12 +36,11 @@ class CharacterAdapter(private val presenter : AllCharacterPresenter): RecyclerV
         }
         holder.itemView.setOnLongClickListener {
             val character = items[position]
-            val counter = presenter.isAlreadyAdded(character)
-            Log.d("COUNTER", "$counter")
-            if(counter > 0) {
-                showAlreadyMenu(holder.itemView)
-            }
-            else showAddMenu(holder.itemView, character)
+            presenter.isAlreadyAdded(character)
+                .subscribeBy{
+                    if (it > 0) showAlreadyMenu(holder.itemView)
+                    else showAddMenu(holder.itemView, character)
+                }
             true
         }
     }
@@ -67,7 +68,7 @@ class CharacterAdapter(private val presenter : AllCharacterPresenter): RecyclerV
     }
 
 
-     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val name = itemView.findViewById<TextView>(R.id.hero_name)
 
         fun bind(item: Character){
