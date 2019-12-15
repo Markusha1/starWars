@@ -17,9 +17,9 @@ import com.mark.starwars.R
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.AllCharacterPresenter
 import com.mark.starwars.utils.Injector
-import com.mark.starwars.views.IAllCharacterView
+import com.mark.starwars.views.IListView
 
-class AllCharactersListFragment : BaseFragment(), IAllCharacterView {
+class AllCharactersListFragment : BaseFragment(), IListView {
     private val presenter: AllCharacterPresenter = AllCharacterPresenter(this)
     private var isLastPage = false
     private var isLoading = false
@@ -71,10 +71,9 @@ class AllCharactersListFragment : BaseFragment(), IAllCharacterView {
     }
 
     override fun showDetails(character : Character){
-        val fragment = DetailFragment.newInstance(character)
         activity!!.supportFragmentManager.beginTransaction()
             .hide(this)
-            .add(R.id.fragment_container, fragment)
+            .add(R.id.fragment_container, DetailFragment.newInstance(character))
             .addToBackStack(null)
             .commit()
         }
@@ -103,10 +102,10 @@ class AllCharactersListFragment : BaseFragment(), IAllCharacterView {
         activity?.finish()
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
+        super.onStop()
         mAdapter.clear()
-        presenter.inDestroy()
-        super.onDestroy()
+        presenter.inStop()
     }
 
 }

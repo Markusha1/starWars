@@ -1,7 +1,7 @@
 package com.mark.starwars.views
 
 
-interface IAllCharacterView : IListView{
+interface IAllCharacterView {
     fun hideProgress()
     fun showProgress()
     fun showErrorDialog()

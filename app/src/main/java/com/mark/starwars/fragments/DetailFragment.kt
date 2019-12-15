@@ -6,16 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.fragment.app.Fragment
 import com.mark.starwars.R
-import com.mark.starwars.db.CharacterRepository
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.DetailPresenter
 import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IDetailView
 import kotlinx.android.synthetic.main.detail_character.*
-import org.w3c.dom.Text
-import javax.inject.Inject
 
 class DetailFragment : BaseFragment(), IDetailView {
     private lateinit var favButton : ImageButton

@@ -11,7 +11,9 @@ import com.mark.starwars.R
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.AllCharacterPresenter
 import com.mark.starwars.presenters.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class CharacterAdapter(private val presenter : BasePresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
     private val items : MutableList<Character> = mutableListOf()
@@ -37,6 +39,8 @@ class CharacterAdapter(private val presenter : BasePresenter): RecyclerView.Adap
         holder.itemView.setOnLongClickListener {
             val character = items[position]
             presenter.isAlreadyAdded(character)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy{
                     if (it > 0) showAlreadyMenu(holder.itemView)
                     else showAddMenu(holder.itemView, character)

@@ -7,4 +7,5 @@ interface IListView : IView{
     fun showDetails(character: Character)
     fun showProgress()
     fun hideProgress()
+    fun showErrorDialog()
 }

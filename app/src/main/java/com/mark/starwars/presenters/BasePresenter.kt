@@ -21,6 +21,8 @@ abstract class BasePresenter(private val view: IListView?) : IBasePresenter {
         return character.isAlreadyAdded(repository)
     }
 
+    abstract fun inStop()
+
     override fun addCharacter(character: Character) {
         character.isFavourite = true
         repository.addItem(character)
@@ -28,5 +30,4 @@ abstract class BasePresenter(private val view: IListView?) : IBasePresenter {
             .subscribe()
     }
 
-    abstract fun loadCharacters()
 }
