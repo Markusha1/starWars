@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.utils.CharacterAdapter
@@ -38,12 +39,11 @@ class AllCharactersListFragment : BaseFragment(), IListView {
         Injector.get().inject(presenter)
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val itemview = inflater.inflate(R.layout.all_characters, container, false)
         progress = itemview.findViewById(R.id.progressBar) as ProgressBar
         val myRecyclerView = itemview.findViewById(R.id.character_list) as RecyclerView
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = GridLayoutManager(activity, 2)
         myRecyclerView.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
         presenter.loadCharacters()

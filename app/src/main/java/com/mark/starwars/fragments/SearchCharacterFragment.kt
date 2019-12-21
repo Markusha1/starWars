@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
 import com.mark.starwars.db.CharacterRepository
@@ -17,10 +16,10 @@ import com.mark.starwars.presenters.SearchPresenter
 import com.mark.starwars.utils.CharacterAdapter
 import com.mark.starwars.utils.Injector
 import com.mark.starwars.views.IListView
-import kotlinx.android.synthetic.main.search_fragmnet.*
+import kotlinx.android.synthetic.main.search_fragment.*
 import javax.inject.Inject
 
-class SearchCharacterFragment : Fragment(), IListView {
+class SearchCharacterFragment : BaseFragment(), IListView {
     @Inject
     lateinit var apiService: RetrofitService
     @Inject
@@ -35,23 +34,23 @@ class SearchCharacterFragment : Fragment(), IListView {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Injector.get().inject(presenter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val itemview= inflater.inflate(R.layout.search_fragmnet, container, false)
+        val itemview= inflater.inflate(R.layout.search_fragment, container, false)
         val myRecycler = itemview.findViewById(R.id.recycler_view) as RecyclerView
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = GridLayoutManager(activity, 2)
         myRecycler.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
         myRecycler.adapter = mAdapter
+//        val searchView = itemview.findViewById<SearchView>(R.id.searchView)
+//        searchView.focusable = View.FOCUSABLE
+//        searchView.queryHint = resources.getString(R.string.query_hint)
+//        searchView.onActionViewExpanded()
+//        searchView.setOnQueryTextListener(this)
         val tb = itemview.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
         (activity as AppCompatActivity).setSupportActionBar(tb)
         (activity as AppCompatActivity).supportActionBar?.title = ""
@@ -72,10 +71,8 @@ class SearchCharacterFragment : Fragment(), IListView {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (!newText.isNullOrBlank()) {
-                    newText.toLowerCase().trim()
-                    presenter.loadCharacters(newText)
-                }
+                val inputText = newText!!.toLowerCase().trim()
+                presenter.loadCharacters(inputText)
                 return true
             }
         })
@@ -118,5 +115,21 @@ class SearchCharacterFragment : Fragment(), IListView {
         super.onStop()
         presenter.inStop()
     }
+
+    override fun onBackPressed() {
+    }
+
+//    override fun onQueryTextSubmit(query: String?): Boolean {
+//        return false
+//    }
+//
+//    override fun onQueryTextChange(inputName: String?): Boolean {
+//        if(!inputName.isNullOrEmpty()) {
+//            val request = inputName.trim().toLowerCase()
+//            presenter.loadCharacters(request)
+//        }
+//        else mAdapter.clear()
+//        return true
+//    }
 
 }

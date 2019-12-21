@@ -1,5 +1,6 @@
 package com.mark.starwars.utils
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.mark.starwars.presenters.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class CharacterAdapter(private val presenter : BasePresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
     private val items : MutableList<Character> = mutableListOf()

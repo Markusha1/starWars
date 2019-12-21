@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
@@ -45,7 +46,7 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val itemview = inflater.inflate(R.layout.favourite_list, container, false)
         val recyclerView = itemview.findViewById(R.id.recyclerview) as RecyclerView
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = GridLayoutManager(activity, 2)
         recyclerView.layoutManager = layoutManager
         mAdapter = FavouriteAdapter(presenter)
         recyclerView.adapter = mAdapter

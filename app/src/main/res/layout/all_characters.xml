@@ -13,12 +13,12 @@
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ProgressBar
         android:visibility="invisible"
         android:id="@+id/progressBar"
-        android:theme="@style/MyProgress"
+        android:theme="@style/AppTheme.WhiteAccent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -32,6 +32,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/starwars_logo_invisible" />
+        app:srcCompat="@drawable/starwars_logo_invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
