@@ -5,7 +5,11 @@ import com.mark.starwars.model.Character
 import com.mark.starwars.db.Repository
 import com.mark.starwars.utils.GenderToImage
 import com.mark.starwars.views.IDetailView
+import io.reactivex.SingleObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -17,15 +21,15 @@ class DetailPresenter(private val view: IDetailView, private val character: Char
 
 
     fun init(){
-        if (repository.isAlreadyExists(character) > 0) view.setStarImage(true)
-        else view.setStarImage(false)
+        inDatabase(character)
         val image = GenderToImage.convert(character.gender)
         view.initDetails(character = character, image = image)
     }
 
     private fun addToFavourite(){
         val addable = repository.addItem(character)
-            .observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 character.isFavourite = true
                 view.addFavourite()
@@ -35,6 +39,8 @@ class DetailPresenter(private val view: IDetailView, private val character: Char
 
     private fun removeFromFavourite(){
         val removable = repository.deleteItem(character)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 character.isFavourite = false
                 view.removeFavourite()
@@ -47,6 +53,21 @@ class DetailPresenter(private val view: IDetailView, private val character: Char
             addToFavourite()
         }
         else removeFromFavourite()
+    }
+
+    private fun inDatabase(c: Character) {
+        compositeDisposable.add(repository.isAlreadyExists(c)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                if (it > 0) {
+                    view.setStarImage(true)
+                    character.isFavourite = true
+                }
+                else {
+                    view.setStarImage(false)
+                }
+            })
     }
 
 }

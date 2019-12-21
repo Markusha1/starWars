@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.utils.CharacterAdapter
@@ -18,9 +18,9 @@ import com.mark.starwars.R
 import com.mark.starwars.model.Character
 import com.mark.starwars.presenters.AllCharacterPresenter
 import com.mark.starwars.utils.Injector
-import com.mark.starwars.views.IAllCharacterView
+import com.mark.starwars.views.IListView
 
-class AllCharactersListFragment : Fragment(), IAllCharacterView {
+class AllCharactersListFragment : BaseFragment(), IListView {
     private val presenter: AllCharacterPresenter = AllCharacterPresenter(this)
     private var isLastPage = false
     private var isLoading = false
@@ -39,15 +39,14 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         Injector.get().inject(presenter)
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val itemview = inflater.inflate(R.layout.all_characters, container, false)
         progress = itemview.findViewById(R.id.progressBar) as ProgressBar
         val myRecyclerView = itemview.findViewById(R.id.character_list) as RecyclerView
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = GridLayoutManager(activity, 2)
         myRecyclerView.layoutManager = layoutManager
         mAdapter = CharacterAdapter(presenter)
-        presenter.loadFirstCharacters()
+        presenter.loadCharacters()
         myRecyclerView.addOnScrollListener(object :
             PaginationScrollListener(layoutManager) {
             override fun isLastPage(): Boolean {
@@ -67,12 +66,11 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         myRecyclerView.adapter = mAdapter
         return itemview
     }
-    override fun onGetDataSuccess(characters: List<Character>) {
+    override fun loadList(characters: List<Character>) {
         mAdapter.addItems(characters)
     }
 
     override fun showDetails(character : Character){
-        DetailFragment.newInstance(character)
         activity!!.supportFragmentManager.beginTransaction()
             .hide(this)
             .add(R.id.fragment_container, DetailFragment.newInstance(character))
@@ -99,11 +97,15 @@ class AllCharactersListFragment : Fragment(), IAllCharacterView {
         dialog.show()
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        activity?.finish()
+    }
 
-    override fun onDestroy() {
+    override fun onStop() {
+        super.onStop()
         mAdapter.clear()
-        presenter.inDestroy()
-        super.onDestroy()
+        presenter.inStop()
     }
 
 }

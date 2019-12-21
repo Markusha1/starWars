@@ -14,7 +14,7 @@ abstract class PaginationScrollListener (var layoutManager: LinearLayoutManager)
 
         if (!isLoading() && !isLastPage()) {
             if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0
-                && totalItemCount >= 6) {
+                && totalItemCount >= 3) {
                 loadMoreItems()
             }
         }

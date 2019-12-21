@@ -2,9 +2,9 @@ package com.mark.starwars.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
@@ -38,6 +38,7 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        presenter = FavouritePresenter(this)
         Injector.get().inject(presenter)
     }
 
@@ -45,7 +46,7 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val itemview = inflater.inflate(R.layout.favourite_list, container, false)
         val recyclerView = itemview.findViewById(R.id.recyclerview) as RecyclerView
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = GridLayoutManager(activity, 2)
         recyclerView.layoutManager = layoutManager
         mAdapter = FavouriteAdapter(presenter)
         recyclerView.adapter = mAdapter
@@ -57,18 +58,16 @@ class FavouriteListFragment : Fragment(), IFavouriteListView {
     }
 
 
-    override fun showDetails(c: Character) {
+    override fun showDetails(character: Character) {
            activity!!.supportFragmentManager.beginTransaction()
                .addToBackStack(null)
-               .replace(R.id.fragment_container, DetailFragment.newInstance(c))
+               .replace(R.id.fragment_container, DetailFragment.newInstance(character))
                .commit()
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("Zanovo", "zan")
         presenter.loadItems()
-//        mAdapter.notifyDataSetChanged()
     }
 
 }

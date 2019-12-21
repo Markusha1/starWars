@@ -25,9 +25,9 @@ class CharacterRepository @Inject constructor(private val db: CharacterDataDao, 
 
     override fun getCharactersFromApi(currentPage: Int): Observable<List<Character>> {
         return apiService.getCharacters(currentPage)
-            .subscribeOn(Schedulers.io())
-            .map{ it.results }
-            .observeOn(AndroidSchedulers.mainThread())
+            .map{
+                it.results
+            }
     }
 
     override fun getSearchResult(inputText: String): Observable<List<Character>> {
