@@ -1,9 +1,9 @@
 package com.mark.starwars.di
 
-import com.mark.starwars.presenters.AllCharacterPresenter
-import com.mark.starwars.presenters.DetailPresenter
-import com.mark.starwars.presenters.FavouritePresenter
-import com.mark.starwars.presenters.SearchPresenter
+import com.mark.starwars.ui.presenter.AllCharacterPresenter
+import com.mark.starwars.ui.presenter.DetailPresenter
+import com.mark.starwars.ui.presenter.FavouritePresenter
+import com.mark.starwars.ui.presenter.SearchPresenter
 import dagger.Component
 import javax.inject.Singleton
 

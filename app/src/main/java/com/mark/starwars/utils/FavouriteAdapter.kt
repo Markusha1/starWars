@@ -8,8 +8,8 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
-import com.mark.starwars.model.Character
-import com.mark.starwars.presenters.FavouritePresenter
+import com.mark.starwars.data.model.Character
+import com.mark.starwars.ui.presenter.FavouritePresenter
 
 class FavouriteAdapter(private val presenter : FavouritePresenter) : RecyclerView.Adapter<FavouriteAdapter.FavoriteHolder>() {
     private val items : MutableList<Character> = mutableListOf()

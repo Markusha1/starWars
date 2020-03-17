@@ -1,6 +1,5 @@
 package com.mark.starwars.utils
 
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +8,11 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mark.starwars.R
-import com.mark.starwars.model.Character
-import com.mark.starwars.presenters.AllCharacterPresenter
-import com.mark.starwars.presenters.BasePresenter
+import com.mark.starwars.data.model.Character
+import com.mark.starwars.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 class CharacterAdapter(private val presenter : BasePresenter): RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
     private val items : MutableList<Character> = mutableListOf()
